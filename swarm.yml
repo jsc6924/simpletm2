@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  backend:
+    image: jsc723/simpletm2-backend:0.0.15
+    ports:
+      - "9000:9000"
+    environment:
+      - CORS_ALLOW_ORIGIN=${CORS_ALLOW_ORIGIN}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - SET_COOKIE_DOMAIN=${SET_COOKIE_DOMAIN}
+      - DB_PATH=${DB_PATH}
+    volumes:
+      - ./backend/data/:/app/data
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  frontend:
+    image: jsc723/simpletm2-frontend:0.0.7
+    ports:
+      - "3000:80"
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+

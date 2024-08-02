@@ -1,0 +1,3 @@
+[sqlite3]
+  # The database connection string.
+  dbname = "./data/SimpleTM.db"
