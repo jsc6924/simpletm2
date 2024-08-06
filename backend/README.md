@@ -28,10 +28,8 @@ cd backend
 docker build -f prod.Dockerfile -t jsc723/simpletm2-backend:0.0.15 .
 docker push jsc723/simpletm2-backend:0.0.15
 update swarm.yml
-git add -u
-git commit -m update
-git push
-git pull
+../push.sh
+#on remote
 make up
 ```
 

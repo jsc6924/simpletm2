@@ -65,7 +65,7 @@ interface MeResponse {
 }
 
 export async function getMe() {
-    const url = `${API_URL}/api/me`;
+    const url = `${API_URL}/me`;
     const response = await apiFetch(url);
     console.log(response);
     if (!response.ok) {

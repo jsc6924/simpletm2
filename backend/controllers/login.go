@@ -3,9 +3,8 @@ package controllers
 import (
 	"backend/config"
 	"backend/entities"
-	"backend/models"
+	"backend/usecase"
 	"backend/utils"
-	"context"
 	"log"
 	"net/http"
 	"time"
@@ -19,11 +18,6 @@ type Credentials struct {
 	Password string `json:"password"`
 }
 
-var users = map[string]string{
-	"user1": "password1",
-	"user2": "password2",
-}
-
 func Login(c *gin.Context) {
 	var creds Credentials
 	if err := c.BindJSON(&creds); err != nil {
@@ -31,23 +25,19 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// Fetch the user from the database
-	user, err := models.Users(models.UserWhere.ID.EQ(creds.Username)).One(context.Background(), config.DB)
-	log.Println("User = %+v", user)
-	if err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized "})
-		return
-	}
-
-	// Hash the provided password
+	userUsecase := usecase.UserUsecase{}
 	hashedPassword := utils.Hash(creds.Password)
-
-	if hashedPassword != user.Salt {
-		log.Println("hashed password not match")
+	ok, err := userUsecase.CheckPassword(creds.Username, hashedPassword)
+	if !ok || err != nil {
+		if err != nil {
+			log.Println(err)
+		} else {
+			log.Println("Password is incorrect")
+		}
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
+
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &entities.Claims{
 		Username: creds.Username,

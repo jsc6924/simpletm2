@@ -36,11 +36,33 @@ func main() {
 		})
 	})
 	router.POST("/login", controllers.Login)
+	router.POST("/signup")
 	// Auth group
 	auth := router.Group("/")
-	auth.Use(midware.AuthMiddleware())
+	auth.Use(midware.AuthMiddleware()) //todo
 	{
-		auth.GET("/api/me", controllers.Me)
+		auth.GET("/logout")
+		auth.GET("/me", controllers.Me)
+		auth.GET("/home")
+		auth.POST("/createGame")
+		auth.POST("/deleteGame")
+		auth.POST("/updatePermission")
+		auth.GET("/project/:name")
+		auth.POST("/updateToken")
+		auth.GET("/generateSharedURL/:game")
+	}
+
+	api := router.Group("/")
+	api.Use(midware.ApiMiddleware()) //todo
+	{
+		api.GET("/api/querybygame/:game", controllers.QueryByGame)
+		api.GET("/api/insert/:game/:rawWord/:translate")
+		api.GET("/api/update/:game/:rawWord/:translate")
+		api.GET("/api/delete/:game/:rawWord")
+
+		api.GET("/api2/querybygame/:game", controllers.QueryByGame)
+		api.GET("/api2/update")
+		api.GET("/api2/delete")
 	}
 
 	router.Run("0.0.0.0:9000")
