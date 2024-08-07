@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func QueryByGame(c *gin.Context) {
+func QueryTranslatesByGame(c *gin.Context) {
 	// get name form REST url
 	game := c.Param("game")
 	if game == "" {

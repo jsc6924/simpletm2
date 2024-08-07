@@ -20,3 +20,14 @@ type Translate struct {
 	Raw       string `json:"raw"`
 	Translate string `json:"translate"`
 }
+
+type GameWithPermission struct {
+	Game       string     `json:"game"`
+	GameTitle  string     `json:"game_title"`
+	Permission Permission `json:"permission"`
+}
+
+type UserWithPermission struct {
+	Username   string     `json:"username"`
+	Permission Permission `json:"permission"`
+}

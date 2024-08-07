@@ -3,6 +3,7 @@ package usecase
 import (
 	"backend/entities"
 	"backend/repository"
+	"backend/utils"
 	"log"
 )
 
@@ -32,4 +33,58 @@ func (u *UserUsecase) CheckPermission(username string, game string, level entiti
 		return false
 	}
 	return true
+}
+
+func (u *UserUsecase) GetPermission(username string, game string) (entities.Permission, error) {
+	return repository.GetPermission(username, game)
+}
+
+func (u *UserUsecase) SetPermission(username string, game string, permission entities.Permission) error {
+	return repository.SetPermission(username, game, permission)
+}
+
+func (u *UserUsecase) GetGamesByUser(username string) ([]*entities.GameWithPermission, error) {
+	return repository.GetGamesByUser(username)
+}
+
+func (u *UserUsecase) GetToken(username string) (string, error) {
+	return repository.GetToken(username)
+}
+
+func (u *UserUsecase) UpdateToken(username string) error {
+	token, err := utils.GenToken(32)
+	if err != nil {
+		return err
+	}
+	return repository.SetToken(username, token)
+}
+
+func (u *UserUsecase) GenerateSharedURL(username string, game string) (string, error) {
+	/*temp_user = f'_{user}_share_{genToken(8)}'
+	  temp_user_password = genToken(8)
+	  temp_user_token = genToken()
+	  temp_user_permission = 2*/
+	tempUserSuffix, err := utils.GenToken(8)
+	if err != nil {
+		return "", err
+	}
+	tempUser := "_" + username + "_share_" + tempUserSuffix
+	tempUserPassword, err := utils.GenToken(8)
+	if err != nil {
+		return "", err
+	}
+	tempUserToken, err := utils.GenToken(32)
+	if err != nil {
+		return "", err
+	}
+	tempUserPermission := entities.EDIT
+	err = repository.CreateUser(tempUser, utils.Hash(tempUserPassword), tempUserToken)
+	if err != nil {
+		return "", err
+	}
+	err = repository.SetPermission(tempUser, game, tempUserPermission)
+	if err != nil {
+		return "", err
+	}
+	return utils.MakeSharedURL(tempUser, tempUserToken, game), nil
 }

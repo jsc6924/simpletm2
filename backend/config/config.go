@@ -9,6 +9,8 @@ var (
 	JwtKey          = []byte("test-secret-key")
 	CorsAllowOrigin = "http://localhost:3000"
 	SetCookieDomain = ""
+	GenUrlProtocal  = "http"
+	GenUrlHost      = "localhost:9000"
 )
 
 func init() {
@@ -23,5 +25,11 @@ func init() {
 	}
 	if key, exists := os.LookupEnv("DB_PATH"); exists {
 		DBPath = key
+	}
+	if key, exists := os.LookupEnv("GEN_URL_PROTOCAL"); exists {
+		GenUrlProtocal = key
+	}
+	if key, exists := os.LookupEnv("GEN_URL_HOST"); exists {
+		GenUrlHost = key
 	}
 }

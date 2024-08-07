@@ -36,31 +36,34 @@ func main() {
 		})
 	})
 	router.POST("/login", controllers.Login)
-	router.POST("/signup")
+	router.POST("/signup") //todo
 	// Auth group
 	auth := router.Group("/")
 	auth.Use(midware.AuthMiddleware()) //todo
 	{
 		auth.GET("/logout", controllers.Logout)
 		auth.GET("/me", controllers.Me)
-		auth.GET("/home")
-		auth.POST("/createGame")
-		auth.POST("/deleteGame")
-		auth.POST("/updatePermission")
-		auth.GET("/project/:name")
-		auth.POST("/updateToken")
-		auth.GET("/generateSharedURL/:game")
+		auth.GET("/user/:username/games", controllers.GetGamesByUser)
+		auth.GET("/user/:username/token", controllers.GetToken)
+		auth.POST("/user/:username/token", controllers.UpdateToken)
+		auth.POST("/gameop/create", controllers.CreateGameAsUser)
+		auth.POST("/gameop/delete", controllers.DeleteGame)
+		auth.GET("/game/:name/translations", controllers.QueryTranslatesByGame)
+		auth.GET("/game/:name/users", controllers.GetUsersByGame)
+		auth.GET("/permission/:user/:game", controllers.GetPermissionByUserGame)
+		auth.POST("/permission", controllers.SetPermission)
+		auth.GET("/generateSharedURL/:game", controllers.GenerateSharedURL)
 	}
 
 	api := router.Group("/")
-	api.Use(midware.ApiMiddleware()) //todo
+	api.Use(midware.ApiMiddleware())
 	{
-		api.GET("/api/querybygame/:game", controllers.QueryByGame)
+		api.GET("/api/querybygame/:game", controllers.QueryTranslatesByGame)
 		api.GET("/api/insert/:game/:rawWord/:translate", controllers.InsertOrUpdateTranslate)
 		api.GET("/api/update/:game/:rawWord/:translate", controllers.InsertOrUpdateTranslate)
 		api.GET("/api/delete/:game/:rawWord", controllers.DeleteTranslate)
 
-		api.GET("/api2/querybygame/:game", controllers.QueryByGame)
+		api.GET("/api2/querybygame/:game", controllers.QueryTranslatesByGame)
 		api.POST("/api2/update", controllers.InsertOrUpdateTranslateV2)
 		api.POST("/api2/delete", controllers.DeleteTranslateV2)
 	}

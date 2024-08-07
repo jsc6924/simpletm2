@@ -95,3 +95,52 @@ func DeleteTranslate(gameID string, rawWord string) error {
 	// Commit the transaction
 	return tx.Commit()
 }
+
+func CreateGameAsUser(gameID string, gameTitle string, userID string) error {
+	// Start a transaction
+	tx, err := config.DB.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback() // Ensure rollback in case of error
+	// insert into game
+	newGame := models.Game{
+		ID:    gameID,
+		Title: null.String{String: gameTitle, Valid: true},
+	}
+	err = newGame.Insert(context.Background(), tx, boil.Infer())
+	if err != nil {
+		return err
+	}
+	// insert into permission
+	newPermission := models.Permission{
+		UserID:     userID,
+		GameID:     gameID,
+		Permission: int64(entities.ADMIN),
+	}
+	err = newPermission.Insert(context.Background(), tx, boil.Infer())
+	if err != nil {
+		return err
+	}
+	return tx.Commit()
+}
+
+func DeleteGame(gameID string) error {
+	// Start a transaction
+	tx, err := config.DB.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback() // Ensure rollback in case of error
+	// delete from game
+	game, err := models.Games(models.GameWhere.ID.EQ(gameID)).One(context.Background(), tx)
+	if err != nil {
+		return err
+	}
+	_, err = game.Delete(context.Background(), tx)
+	if err != nil {
+		return err
+	}
+	// permission is automatically deleted by cascade
+	return tx.Commit()
+}
