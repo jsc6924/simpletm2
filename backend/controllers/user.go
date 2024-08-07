@@ -14,6 +14,28 @@ func Me(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"username": username})
 }
 
+type CreateUserRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+func CreateUser(c *gin.Context) {
+	var req CreateUserRequest
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+	username := req.Username
+	password := req.Password
+	usecase := usecase.UserUsecase{}
+	if err := usecase.CreateUser(username, password); err != nil {
+		log.Println("Create user error: ", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"result": "ok"})
+}
+
 func GetGamesByUser(c *gin.Context) {
 	username := c.Param("username")
 	c.JSON(http.StatusOK, gin.H{"username": username})

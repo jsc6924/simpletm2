@@ -36,7 +36,7 @@ func main() {
 		})
 	})
 	router.POST("/login", controllers.Login)
-	router.POST("/signup") //todo
+	router.POST("/signup", controllers.CreateUser) //todo
 	// Auth group
 	auth := router.Group("/")
 	auth.Use(midware.AuthMiddleware()) //todo

@@ -10,6 +10,15 @@ import (
 type UserUsecase struct {
 }
 
+func (u *UserUsecase) CreateUser(username string, password string) error {
+	token, err := utils.GenToken(32)
+	if err != nil {
+		return err
+	}
+	hashedPassword := utils.Hash(password)
+	return repository.CreateUser(username, hashedPassword, token)
+}
+
 func (u *UserUsecase) CheckPassword(username string, hashedPassword string) (bool, error) {
 	user, err := repository.GetUserByUsername(username)
 	if err != nil || user == nil {
@@ -60,10 +69,6 @@ func (u *UserUsecase) UpdateToken(username string) error {
 }
 
 func (u *UserUsecase) GenerateSharedURL(username string, game string) (string, error) {
-	/*temp_user = f'_{user}_share_{genToken(8)}'
-	  temp_user_password = genToken(8)
-	  temp_user_token = genToken()
-	  temp_user_permission = 2*/
 	tempUserSuffix, err := utils.GenToken(8)
 	if err != nil {
 		return "", err
