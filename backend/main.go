@@ -41,7 +41,7 @@ func main() {
 	auth := router.Group("/")
 	auth.Use(midware.AuthMiddleware()) //todo
 	{
-		auth.GET("/logout")
+		auth.GET("/logout", controllers.Logout)
 		auth.GET("/me", controllers.Me)
 		auth.GET("/home")
 		auth.POST("/createGame")
@@ -56,13 +56,13 @@ func main() {
 	api.Use(midware.ApiMiddleware()) //todo
 	{
 		api.GET("/api/querybygame/:game", controllers.QueryByGame)
-		api.GET("/api/insert/:game/:rawWord/:translate")
-		api.GET("/api/update/:game/:rawWord/:translate")
-		api.GET("/api/delete/:game/:rawWord")
+		api.GET("/api/insert/:game/:rawWord/:translate", controllers.InsertOrUpdateTranslate)
+		api.GET("/api/update/:game/:rawWord/:translate", controllers.InsertOrUpdateTranslate)
+		api.GET("/api/delete/:game/:rawWord", controllers.DeleteTranslate)
 
 		api.GET("/api2/querybygame/:game", controllers.QueryByGame)
-		api.GET("/api2/update")
-		api.GET("/api2/delete")
+		api.POST("/api2/update", controllers.InsertOrUpdateTranslateV2)
+		api.POST("/api2/delete", controllers.DeleteTranslateV2)
 	}
 
 	router.Run("0.0.0.0:9000")

@@ -7,6 +7,6 @@ import (
 )
 
 func Me(c *gin.Context) {
-	username := c.MustGet("username").(string)
+	username := c.GetString("username")
 	c.JSON(http.StatusOK, gin.H{"username": username})
 }

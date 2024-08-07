@@ -56,3 +56,8 @@ func Login(c *gin.Context) {
 	c.SetCookie("token", tokenString, int(time.Until(expirationTime).Seconds()), "/", config.SetCookieDomain, false, false)
 	c.JSON(http.StatusOK, "ok")
 }
+
+func Logout(c *gin.Context) {
+	c.SetCookie("token", "", -1, "/", config.SetCookieDomain, false, false)
+	c.JSON(http.StatusOK, "ok")
+}
