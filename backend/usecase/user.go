@@ -49,7 +49,7 @@ func (u *UserUsecase) GetPermission(username string, game string) (entities.Perm
 }
 
 func (u *UserUsecase) SetPermission(username string, game string, permission entities.Permission) error {
-	return repository.SetPermission(username, game, permission)
+	return repository.InsertOrSetPermission(username, game, permission)
 }
 
 func (u *UserUsecase) GetGamesByUser(username string) ([]*entities.GameWithPermission, error) {
@@ -60,12 +60,15 @@ func (u *UserUsecase) GetToken(username string) (string, error) {
 	return repository.GetToken(username)
 }
 
-func (u *UserUsecase) UpdateToken(username string) error {
+func (u *UserUsecase) UpdateToken(username string) (string, error) {
 	token, err := utils.GenToken(32)
 	if err != nil {
-		return err
+		return "", err
 	}
-	return repository.SetToken(username, token)
+	if err = repository.SetToken(username, token); err != nil {
+		return "", err
+	}
+	return token, nil
 }
 
 func (u *UserUsecase) GenerateSharedURL(username string, game string) (string, error) {
@@ -87,7 +90,7 @@ func (u *UserUsecase) GenerateSharedURL(username string, game string) (string, e
 	if err != nil {
 		return "", err
 	}
-	err = repository.SetPermission(tempUser, game, tempUserPermission)
+	err = repository.InsertOrSetPermission(tempUser, game, tempUserPermission)
 	if err != nil {
 		return "", err
 	}

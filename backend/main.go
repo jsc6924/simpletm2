@@ -36,20 +36,20 @@ func main() {
 		})
 	})
 	router.POST("/login", controllers.Login)
-	router.POST("/signup", controllers.CreateUser) //todo
+	router.POST("/signup", controllers.CreateUser)
 	// Auth group
 	auth := router.Group("/")
-	auth.Use(midware.AuthMiddleware()) //todo
+	auth.Use(midware.AuthMiddleware())
 	{
 		auth.GET("/logout", controllers.Logout)
 		auth.GET("/me", controllers.Me)
-		auth.GET("/user/:username/games", controllers.GetGamesByUser)
-		auth.GET("/user/:username/token", controllers.GetToken)
-		auth.POST("/user/:username/token", controllers.UpdateToken)
-		auth.POST("/gameop/create", controllers.CreateGameAsUser)
+		auth.GET("/my/games", controllers.GetGamesByLoginUser)
+		auth.GET("/my/token", controllers.GetToken)
+		auth.POST("/my/token", controllers.UpdateToken)
+		auth.POST("/gameop/create", controllers.CreateGameAsLoginUser)
 		auth.POST("/gameop/delete", controllers.DeleteGame)
-		auth.GET("/game/:name/translations", controllers.QueryTranslatesByGame)
-		auth.GET("/game/:name/users", controllers.GetUsersByGame)
+		auth.GET("/game/:game/translations", controllers.QueryTranslatesByGame)
+		auth.GET("/game/:game/users", controllers.GetUsersByGame)
 		auth.GET("/permission/:user/:game", controllers.GetPermissionByUserGame)
 		auth.POST("/permission", controllers.SetPermission)
 		auth.GET("/generateSharedURL/:game", controllers.GenerateSharedURL)

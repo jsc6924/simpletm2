@@ -30,8 +30,8 @@ func GetPermission(username string, game string) (entities.Permission, error) {
 	return permission, err
 }
 
-func SetPermission(username string, game string, permission entities.Permission) error {
-	_, err := config.DB.Exec("UPDATE Permission SET permission = ? WHERE user_id = ? AND game_id = ?", permission, username, game)
+func InsertOrSetPermission(username string, game string, permission entities.Permission) error {
+	_, err := config.DB.Exec("INSERT INTO Permission (user_id, game_id, permission) VALUES (?, ?, ?) ON CONFLICT(user_id, game_id) DO UPDATE SET permission = ?", username, game, permission, permission)
 	return err
 }
 
@@ -47,7 +47,7 @@ func SetToken(username string, token string) error {
 }
 
 func GetGamesByUser(username string) ([]*entities.GameWithPermission, error) {
-	query := `SELECT p.user_id, p.game_id, g.title, p.permission from Permission AS p 
+	query := `SELECT p.game_id, g.title, p.permission from Permission AS p 
             JOIN User AS u ON p.user_id=u.id
             JOIN Game AS g ON p.game_id=g.id
             WHERE p.user_id=?`

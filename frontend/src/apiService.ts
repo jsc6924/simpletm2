@@ -33,7 +33,7 @@ function getToken() {
     const tokenRegex = /.*token=.*/;
     const tokenRow = cookies.filter(row => tokenRegex.test(row)) as string[];
     if (tokenRow.length === 0) {
-        throw new Error("Unable tp get cookie");
+        throw new Error("Unable to get cookie");
     }
     const token = tokenRow[0].split("=")[1];
     return token;

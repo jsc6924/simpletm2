@@ -36,7 +36,7 @@ type CreateGameRequest struct {
 	GameTitle string `json:"game_title"`
 }
 
-func CreateGameAsUser(c *gin.Context) {
+func CreateGameAsLoginUser(c *gin.Context) {
 	var req CreateGameRequest
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
@@ -79,7 +79,7 @@ func DeleteGame(c *gin.Context) {
 	err := gu.DeleteGame(gameId)
 	if err != nil {
 		log.Println("Delete game error: ", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No such game"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"result": "ok"})

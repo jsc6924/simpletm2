@@ -14,6 +14,12 @@ func init() {
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
+	// Enable foreign key support
+	_, err = db.Exec("PRAGMA foreign_keys = ON;")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	boil.SetDB(db)
 	DB = db
 }

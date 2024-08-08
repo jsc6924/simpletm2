@@ -36,16 +36,10 @@ func CreateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"result": "ok"})
 }
 
-func GetGamesByUser(c *gin.Context) {
-	username := c.Param("username")
-	c.JSON(http.StatusOK, gin.H{"username": username})
+func GetGamesByLoginUser(c *gin.Context) {
 	loginUser := c.GetString("username")
-	if loginUser != username {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-		return
-	}
 	usecase := usecase.UserUsecase{}
-	games, err := usecase.GetGamesByUser(username)
+	games, err := usecase.GetGamesByUser(loginUser)
 	if err != nil {
 		log.Println("Get games error: ", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
@@ -69,13 +63,13 @@ func GetToken(c *gin.Context) {
 func UpdateToken(c *gin.Context) {
 	username := c.GetString("username")
 	usecase := usecase.UserUsecase{}
-	err := usecase.UpdateToken(username)
+	token, err := usecase.UpdateToken(username)
 	if err != nil {
 		log.Println("Set token error: ", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"result": "ok"})
+	c.JSON(http.StatusOK, gin.H{"token": token})
 }
 
 func GetPermissionByUserGame(c *gin.Context) {
@@ -89,7 +83,7 @@ func GetPermissionByUserGame(c *gin.Context) {
 	permission, err := usecase.GetPermission(user, game)
 	if err != nil {
 		log.Println("Get permission error: ", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"permission": permission})
