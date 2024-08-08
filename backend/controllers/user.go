@@ -115,6 +115,29 @@ func SetPermission(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"result": "ok"})
 }
+func GetSharedURL(c *gin.Context) {
+	tempUser := c.Param("tempuser")
+	game := c.Param("game")
+	if tempUser == "" || game == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+	username := c.GetString("username")
+
+	// check permission
+	usecase := usecase.UserUsecase{}
+	if !usecase.CheckPermission(username, game, entities.ADMIN) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+	sharedURL, err := usecase.GetSharedURL(tempUser, game)
+	if err != nil {
+		log.Println("Get shared URL error: ", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"shared_url": sharedURL})
+}
 
 func GenerateSharedURL(c *gin.Context) {
 	game := c.Param("game")

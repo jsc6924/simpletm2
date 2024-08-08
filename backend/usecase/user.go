@@ -71,6 +71,14 @@ func (u *UserUsecase) UpdateToken(username string) (string, error) {
 	return token, nil
 }
 
+func (u *UserUsecase) GetSharedURL(username string, game string) (string, error) {
+	token, err := repository.GetToken(username)
+	if err != nil {
+		return "", err
+	}
+	return utils.MakeSharedURL(username, token, game), nil
+}
+
 func (u *UserUsecase) GenerateSharedURL(username string, game string) (string, error) {
 	tempUserSuffix, err := utils.GenToken(8)
 	if err != nil {

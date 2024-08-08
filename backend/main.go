@@ -52,7 +52,8 @@ func main() {
 		auth.GET("/game/:game/users", controllers.GetUsersByGame)
 		auth.GET("/permission/:user/:game", controllers.GetPermissionByUserGame)
 		auth.POST("/permission", controllers.SetPermission)
-		auth.GET("/generateSharedURL/:game", controllers.GenerateSharedURL)
+		auth.GET("/sharedURL/:tempuser/:game", controllers.GetSharedURL)
+		auth.POST("/sharedURL/:game", controllers.GenerateSharedURL)
 	}
 
 	api := router.Group("/")
